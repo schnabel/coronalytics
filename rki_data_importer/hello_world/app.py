@@ -1,37 +1,21 @@
 import json
 
-# import requests
+import awswrangler as wr
+import pandas as pd
 
+BUCKET = 'beaker42-coronalytics'
 
 def lambda_handler(event, context):
-    """Sample pure Lambda function
-
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
-
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
-
-    context: object, required
-        Lambda Context runtime methods and attributes
-
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
+    try:
+        DATA_URL = 'https://www.arcgis.com/sharing/rest/content/items/66876b81065340a4a48710b062319336/data'
+        df = pd.read_csv(DATA_URL)
+            
+        path = f"s3://{BUCKET}/csv/data.csv"
+        wr.s3.to_csv(df, path, index=False)
+ 
+    except Exception as e:
+        print(e)
+        raise e
 
     return {
         "statusCode": 200,

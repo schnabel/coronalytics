@@ -8,7 +8,7 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 900
 
 Resources:
   HelloWorldFunction:
@@ -17,6 +17,9 @@ Resources:
       CodeUri: hello_world/
       Handler: app.lambda_handler
       Runtime: python3.9
+      MemorySize: 2048
+      Layers:
+        - "arn:aws:lambda:eu-central-1:336392948345:layer:AWSDataWrangler-Python39:1"
       Architectures:
         - x86_64
       Events:

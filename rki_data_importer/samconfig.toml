@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "rki-data-importer"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-16vkb8nvqt4tl"
+s3_prefix = "rki-data-importer"
+region = "eu-central-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []

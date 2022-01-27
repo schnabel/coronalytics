@@ -5,9 +5,11 @@ description = ""
 authors = ["Dirk Habighorst <dirk.habighorst@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<=3.10.0"
 jupyterlab = "^3.2.8"
 pandas = "^1.4.0"
+boto3 = "^1.20.44"
+awswrangler = "^2.13.0"
 
 [tool.poetry.dev-dependencies]
 
