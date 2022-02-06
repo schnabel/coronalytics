@@ -8,7 +8,7 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 900
+    Timeout: 180
 
 Resources:
   HelloWorldFunction:
@@ -32,6 +32,50 @@ Resources:
         - AWSLambdaBasicExecutionRole
         - AmazonS3FullAccess
 
+  DailyImportRKIData:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: importer/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Environment:
+        Variables:
+          SQSqueueName: !Ref MySqsQueue
+      Architectures:
+        - x86_64
+      Events:
+        DailyImportEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 * * ? *)
+      Policies: 
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt MySqsQueue.QueueName
+
+  RKIDataStateImporter:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: importer/
+      Handler: state.lambda_handler
+      Runtime: python3.9
+      MemorySize: 1024
+      Architectures:
+        - x86_64
+      Events:
+        MySQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt MySqsQueue.Arn
+            BatchSize: 1
+      Layers:
+        - "arn:aws:lambda:eu-central-1:336392948345:layer:AWSDataWrangler-Python39:1"
+      Policies: 
+        - AWSLambdaBasicExecutionRole
+        - AmazonS3FullAccess
+
+  MySqsQueue:
+    Type: AWS::SQS::Queue
+    
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
